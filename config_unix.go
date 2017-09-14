@@ -15,10 +15,8 @@ type config struct {
 		Affinity []string // CPU亲和性
 	}
 	Client struct {
-		Config string   // 配置文件路径
-		Pprof  []string // pprof 监听
-		Socket []string // socket 监听
-		Ping   []string // ping 监听
+		Config  string   // 配置文件路径
+		Sockets []string // socket 监听
 	}
 }
 

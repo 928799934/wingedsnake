@@ -4,6 +4,7 @@ import (
 	"context"
 	log "github.com/928799934/log4go.v1"
 	ws "github.com/928799934/wingedsnake"
+	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
@@ -21,16 +22,19 @@ var (
 )
 
 // InitFunc 测试
-func InitFunc(config string, socket, ping, pprof []net.Listener) {
+func InitFunc(config string, sockets []net.Listener) {
 	log.LoadConfiguration(config)
 
 	http.HandleFunc("/ddd", func(wr http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		pid := os.Getpid()
 		log.Info("pid[%v] params:%v", pid, r.Form)
+		file := r.FormValue("f")
+		buf, _ := ioutil.ReadFile(file)
+		wr.Write(buf)
 	})
 
-	for _, l := range socket {
+	for _, l := range sockets {
 		s := &http.Server{
 			ReadTimeout:    30 * time.Second,
 			WriteTimeout:   30 * time.Second,

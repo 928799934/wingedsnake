@@ -42,15 +42,13 @@ import "C"
 
 import (
 	"errors"
-	"os"
 )
 
 var (
 	ErrSetAffinity = errors.New("sched_setaffinity fail")
 )
 
-func exchangeAffinity(mask int) error {
-	pid := os.Getpid()
+func exchangeAffinity(mask, pid int) error {
 	if schedGetAffinity(pid) == mask {
 		return nil
 	}
