@@ -2,6 +2,7 @@ package wingedsnake
 
 import (
 	"errors"
+	"net"
 )
 
 var (
