@@ -1,7 +1,8 @@
+// +build darwin dragonfly freebsd linux netbsd openbsd solaris
+
 package wingedsnake
 
 import (
-	"errors"
 	"net"
 	"os"
 	"sync"
@@ -9,10 +10,6 @@ import (
 
 const (
 	globalKey = "WINGEDSNAKE_CONFIG"
-)
-
-var (
-	errWindows = errors.New("not support windows")
 )
 
 // wingedSnake 实例

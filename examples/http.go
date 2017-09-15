@@ -3,38 +3,32 @@ package main
 import (
 	"context"
 	log "github.com/928799934/log4go.v1"
-	ws "github.com/928799934/wingedsnake"
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
 	"time"
 )
-
-func main() {
-	if err := ws.Main(InitFunc, QuitFunc); err != nil {
-		panic(err)
-	}
-}
 
 var (
 	ss []*http.Server
 )
 
-// InitFunc 测试
-func InitFunc(config string, sockets []net.Listener) {
-	log.LoadConfiguration(config)
+func handleCatFile(wr http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	file := r.FormValue("file")
+	buf, err := ioutil.ReadFile(file)
+	if err != nil {
+		log.Error("ioutil.ReadFile(%v) error(%v)", file, err)
+		wr.Write([]byte(err.Error()))
+		return
+	}
+	wr.Write(buf)
+}
 
-	http.HandleFunc("/ddd", func(wr http.ResponseWriter, r *http.Request) {
-		r.ParseForm()
-		pid := os.Getpid()
-		log.Info("pid[%v] params:%v", pid, r.Form)
-		file := r.FormValue("f")
-		buf, _ := ioutil.ReadFile(file)
-		wr.Write(buf)
-	})
+func startHTTPListen(listeners []net.Listener) {
+	http.HandleFunc("/ddd", handleCatFile)
 
-	for _, l := range sockets {
+	for _, l := range listeners {
 		s := &http.Server{
 			ReadTimeout:    30 * time.Second,
 			WriteTimeout:   30 * time.Second,
@@ -50,15 +44,11 @@ func InitFunc(config string, sockets []net.Listener) {
 			}
 		}(s, l)
 	}
-	log.Info("init")
 }
 
-// QuitFunc 测试
-func QuitFunc() {
-	log.Info("quit")
+func stopHTTPListen() {
 	for _, s := range ss {
 		ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
 		s.Shutdown(ctx)
 	}
-	log.Close()
 }
