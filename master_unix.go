@@ -22,7 +22,7 @@ func master(ws *wingedSnake) error {
 	}
 
 	if conf.Base.Process == 0 {
-		return
+		return fmt.Errorf("Base.Process == 0")
 	}
 
 	// 获取用户名ID 与用户组ID
