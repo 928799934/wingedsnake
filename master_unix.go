@@ -33,7 +33,11 @@ func master(ws *wingedSnake) error {
 	}
 
 	// 获取CPU亲和数据
-	affinities := makeAffinities(conf.Base.Affinity)
+	affinities, err := makeAffinities(conf.Base.Affinity)
+	if err != nil {
+		logf("makeAffinities(%v) error(%v)", conf.Base.Affinity, err)
+		return err
+	}
 
 	jsonData, err := json.Marshal(conf.Client)
 	if err != nil {

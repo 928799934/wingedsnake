@@ -69,13 +69,13 @@ func schedSetAffinity(pid, mask int) error {
 	return nil
 }
 
-func makeAffinities(affinity []string) []int {
+func makeAffinities(affinity []string) ([]int, error) {
 	affinities := make([]int, len(affinity))
 	for i, v := range affinity {
 		cpuMask, err := strconv.ParseInt(v, 2, 0)
 		if err != nil {
 			logf("strconv.ParseInt(%v, 2, 0) error(%v)", v, err)
-			return err
+			return nil, err
 		}
 		affinityMask := 0
 		for cpuMask > 0 {
@@ -84,5 +84,5 @@ func makeAffinities(affinity []string) []int {
 		}
 		affinities[i] = affinityMask
 	}
-	return affinities
+	return affinities, nil
 }
