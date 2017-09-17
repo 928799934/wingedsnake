@@ -42,6 +42,7 @@ import "C"
 
 import (
 	"errors"
+	"strconv"
 )
 
 var (
