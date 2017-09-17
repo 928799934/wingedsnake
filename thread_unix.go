@@ -47,7 +47,9 @@ func (th *thread) wait(i int) {
 	// 等待进程启动
 	time.Sleep(100 * time.Millisecond)
 	// 调整cpu 亲和
-	exchangeAffinity(th.affinities[i], p.Pid)
+	if len(th.affinities) > i+1 {
+		exchangeAffinity(th.affinities[i], p.Pid)
+	}
 	for {
 		state, err := p.Wait()
 		if err != nil {

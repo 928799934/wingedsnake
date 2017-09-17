@@ -22,6 +22,10 @@ func master(ws *wingedSnake) error {
 		return err
 	}
 
+	if conf.Base.Process == 0 {
+		return
+	}
+
 	// 获取用户名ID 与用户组ID
 	uid, gid, err := getConfigUser(conf)
 	if err != nil {
@@ -29,21 +33,8 @@ func master(ws *wingedSnake) error {
 		return err
 	}
 
-	// 获取CPU亲和数据 与进程数
-	affinities := make([]int, len(conf.Base.Affinity))
-	for i, v := range conf.Base.Affinity {
-		cpuMask, err := strconv.ParseInt(v, 2, 0)
-		if err != nil {
-			logf("strconv.ParseInt(%v, 2, 0) error(%v)", v, err)
-			return err
-		}
-		affinityMask := 0
-		for cpuMask > 0 {
-			cpuMask >>= 1
-			affinityMask++
-		}
-		affinities[i] = affinityMask
-	}
+	// 获取CPU亲和数据
+	affinities := makeAffinities(conf.Base.Affinity)
 
 	jsonData, err := json.Marshal(conf.Client)
 	if err != nil {
@@ -71,7 +62,7 @@ func master(ws *wingedSnake) error {
 		return fmt.Errorf("getFileByListener(%v) fail ", v.Addr().String())
 	}
 
-	ws.running = make([]*os.Process, len(affinities))
+	ws.running = make([]*os.Process, conf.Base.Process)
 	// 启动子线程
 	thread := newThread(env, files, affinities, ws.running, uid, gid)
 

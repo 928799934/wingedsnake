@@ -13,6 +13,7 @@ type config struct {
 		Group    string   // 用户组
 		PidPath  string   // 进程pid存储位置
 		Affinity []string // CPU亲和性
+		Process  int      // 进程数
 	}
 	Client struct {
 		Config  string   // 配置文件路径
