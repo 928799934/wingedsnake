@@ -38,4 +38,4 @@ Sockets=0.0.0.0:9900,0.0.0.0:9920,127.0.0.1:9910
 ```
 ## 备注
 1.内部自带CPU 亲和配置  自由选择 使用 runtime.GOMAXPROCS 函数  或使用cpu亲和配置
-2.不支持windows
+2.不支持windows,darwin

@@ -1,4 +1,4 @@
-// +build darwin dragonfly freebsd linux netbsd openbsd solaris
+// +build dragonfly freebsd linux netbsd openbsd
 
 package wingedsnake
 
@@ -104,10 +104,7 @@ loop:
 	thread.Wait()
 
 	// 关闭监听
-	for _, v := range listeners {
-		v.Close()
-	}
-	// unix socket 需要关闭时间  立即退出会关闭失败
-	time.Sleep(100 * time.Millisecond)
+	closeListeners(listeners)
+
 	return nil
 }

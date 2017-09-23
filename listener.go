@@ -1,4 +1,4 @@
-// +build darwin dragonfly freebsd linux netbsd openbsd solaris
+// +build dragonfly freebsd linux netbsd openbsd solaris
 
 package wingedsnake
 
@@ -72,4 +72,16 @@ func getFileByListener(l net.Listener) *os.File {
 		return f
 	}
 	return nil
+}
+
+func closeListeners(list []net.Listener) {
+	for _, l := range list {
+		switch inst := l.(type) {
+		case *net.TCPListener:
+			inst.Close()
+		case *net.UnixListener:
+			inst.SetUnlinkOnClose(true)
+			inst.Close()
+		}
+	}
 }
